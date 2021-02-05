@@ -119,6 +119,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "13bd41f508810a131401606d54ac32a467c97172d74ba7662562ebba5ad07fa0"
 
 [[package]]
+name = "panesdevmodtest"
+version = "0.1.0"
+dependencies = [
+ "data-encoding",
+ "ring",
+ "rust-argon2",
+]
+
+[[package]]
 name = "proc-macro2"
 version = "1.0.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -161,15 +170,6 @@ dependencies = [
  "blake2b_simd",
  "constant_time_eq",
  "crossbeam-utils",
-]
-
-[[package]]
-name = "rust-argon2-password"
-version = "0.1.0"
-dependencies = [
- "data-encoding",
- "ring",
- "rust-argon2",
 ]
 
 [[package]]
