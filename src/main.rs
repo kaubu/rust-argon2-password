@@ -1,64 +1,46 @@
-use std::io::{self, Write};
-use argon2::{self, Config, Variant, ThreadMode};
-use ring::rand::{self, SecureRandom};
-use data_encoding::HEXUPPER;
+// main.rs by https://github.com/kaubu
+// An example of how to use the module
 
-const SALT_LENGTH: usize = 32;
+use std::io::{self, Write};
+
+mod password;
 
 fn main() {
-	let password = input("Password: ");
-	let hash = hash_password(password);
+	let option = get_input("[Panes Password Tester]\nWhat option would you like to use?\n[1] Hash a password\n[2] Check a hash and a password\n>> ");
+	let option: i32 = option.parse().unwrap_or(-1);
 
-	println!("Hash Result: {:?}\n[Password Checker]", hash);
+	match option {
+		-1 => {
+			println!("Not a number!");
+		}
+		1 => { // Hash a password
+			let pass = get_input("Password: ");
+			println!("Hash: {:?}", password::hash_password(pass)); // Get's hash and prints it instantly
+		},
+		2 => { // Check a hash and a password
+			let hash = get_input("Hash: ");
+			let pass = get_input("Password: ");
 
-	let hash = input("Hash: ");
-	let password = input("Password: ");
+			let pass_check = password::is_password(hash, pass); // Checks the hash and the password
 
-	let password_match = is_password(hash, password);
-
-	match password_match {
-		true => { println!("Password does match."); },
-		false => { println!("Password does not match."); }
+			match pass_check {
+				true => {
+					println!("Password is correct.");
+				},
+				false => {
+					println!("Password is incorrect.");
+				}
+			}
+		},
+		_ => {
+			println!("Not an option!");
+		}
 	}
+
+	get_input("Press ENTER to exit.");
 }
 
-fn generate_salt() -> String {
-	let rng = rand::SystemRandom::new();
-	let mut salt = [0u8; SALT_LENGTH];
-
-	rng.fill(&mut salt).unwrap();
-
-	HEXUPPER.encode(&salt)
-}
-
-fn hash_password(password: String) -> String {
-	let password = password.as_bytes();
-	let default_config = Config::default();
-
-	let config = Config {
-		variant: Variant::Argon2id,
-		version: default_config.version,
-		mem_cost: default_config.mem_cost,
-		time_cost: 4, // Amount of passes
-		lanes: 4, // Amount of cores
-		thread_mode: ThreadMode::Parallel,
-		secret: default_config.secret,
-		ad: default_config.ad,
-		hash_length: 32
-	};
-
-	let salt = generate_salt();
-
-	argon2::hash_encoded(password, &salt.as_bytes(), &config).unwrap() // Returns the hash
-}
-
-fn is_password(hash: String, password: String) -> bool {
-	let password = password.as_bytes();
-
-	argon2::verify_encoded(&hash, password).expect("[ERROR] Invalid hash or other error.")
-}
-
-fn input(message: &str) -> String {
+fn get_input(message: &str) -> String {
 	let mut input = String::new();
 
 	print!("{}", &message);
