@@ -1,0 +1,12 @@
+[package]
+name = "rust-argon2-password"
+version = "0.1.0"
+authors = ["https://github.com/kaubu"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rust-argon2 = "0.8"
+ring = "0.16.19"
+data-encoding = "2.3.1"
